@@ -24,50 +24,67 @@ def load_image(img_path):
 
 ### define mapping of intensivity ranges to ascii 
 def grayscale_to_ascii(val):
-	pass
+	# using 9-level system from this article
+	# https://www.codeproject.com/Articles/20435/Using-C-To-Generate-ASCII-Art-From-An-Image
+	if val > 230:
+		return " "
+	elif val > 200:
+		return "."
+	elif val > 180:
+		return "*"
+	elif val > 160:
+		return ":"
+	elif val > 130:
+		return "o"
+	elif val > 100:
+		return "&"
+	elif val > 70:
+		return "8"
+	elif val > 50:
+		return "#"
+	else:
+		return "@"
 
 
 ### locally average intensivity and change it to ascii
 def get_ascii_from_image(img_matrix):
 	conv_ratio = 5
-	conv_img = np.empty(shape=[int(np.size(img_matrix,0)/conv_ratio), int(np.size(img_matrix,1)/conv_ratio)], dtype=int)
-	# shape calculated as rounded down (matrix_n / conv_ratio), (matrix_m / conv_ratio)
-	
-	oi = 0 # original i
-	oj = 0 # original j
-	ci = 0 # convoluted i
-	cj = 0 # convoluted j
 
-	while oi < np.size(img_matrix,0): # convolve image
-		oj = 0
-		cj = 0
+	print("--------------------DEBUG DATA----------------------------")
+	print("img_matrix: (" + str(np.size(img_matrix, 0)) + "," + str(np.size(img_matrix, 1)) + ")")
 
-		while oj < np.size(img_matrix,0):
+	ascii_img = []
+
+	for i in range(0, np.size(img_matrix, 0), conv_ratio):
+		ascii_line = []
+		for j in range(0, np.size(img_matrix, 1), conv_ratio):
+			# check if current window is not OOB for img_matrix
+			if i + conv_ratio >= np.size(img_matrix, 0) or j + conv_ratio >= np.size(img_matrix, 1):
+				continue
 			res = 0
-
-			for ti in range(oi, oi + conv_ratio): # TODO change! out of index
-				for tj in range(oj, oj + conv_ratio):
+			for ti in range(i, i + conv_ratio):
+				for tj in range(j, j + conv_ratio):
 					res = res + img_matrix[ti][tj] # sum intensivities in current window
+			ascii_line.append(grayscale_to_ascii(int(res/(conv_ratio ** 2)))) # get avg intensivity and make it ascii
+		if ascii_line: # check in case of early stop for OOB prevention
+			ascii_img.append(ascii_line)
 
-			conv_img[ci][cj] = int(res/pow(conv_ratio, 2)) # get avg intensivity
+	print("ascii_img: (" + str(len(ascii_img)) + "," + str(len(ascii_img[0])) + ")")
 
-			oj = oj + conv_ratio
-			cj = cj + 1
-
-		oi = oi + conv_ratio
-		ci = ci + 1
-
-	return conv_img
-
-
-
+	return ascii_img
 
 
 def main():
 	img_path = get_image_path()
 	img = load_image(img_path)
-	conv_img = get_ascii_from_image(img)
+	ascii_img = get_ascii_from_image(img)
 
+	f = open("out.txt", "w")
+	for i in range(len(ascii_img)):
+		for j in range(len(ascii_img[0])):
+			f.write(ascii_img[i][j])
+		f.write("\n")
+	f.close()
 
 if __name__ == "__main__":
 	main()
