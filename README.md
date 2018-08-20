@@ -1,7 +1,7 @@
 # img2ascii
 A script to make ASCII-art from images.
 ### Installation and requirements
-Python 3.* is required. All dependencies can be fetched by pip via requirements.txt
+Python 3.* is required. All dependencies can be fetched by pip from requirements.txt
 ```
 pip install -r requirements.txt
 ```
