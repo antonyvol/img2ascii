@@ -10,6 +10,7 @@ requirements.txt for this script is included in the repo.
 The script has 2 mandatory arguments:
 * path to image - any (relative or full) path to image you want to convert
 * convolution ratio - defines the side of convolution frame; the bigger the value - the bigger group of pixels will be represented as a single ASCII-character
+
 Example:
 ```
 python main.py /home/antonyvol/img.jpg 4
